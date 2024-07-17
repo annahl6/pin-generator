@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Generator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="locked" class="locked"><h1><b>Sorry Your Account is Locked....</b></h1></div>
+    <div id="body1" class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="pin-generator half-width">
+                    <input id =pinNumber class="form-control" type="text">
+                    <button id="generateBtn" class="generate-btn">Generate Pin</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-section half-width">
+                    <input id="pressedNumber" class="form-control" type="text">
+                    <div class="numbers">
+                        <div id="calculator" class="calc-body">
+                            <div class="calc-button-row">
+                              <div class="button">7</div>
+                              <div class="button">8</div>
+                              <div class="button">9</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button">4</div>
+                              <div class="button">5</div>
+                              <div class="button">6</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button">1</div>
+                              <div class="button">2</div>
+                              <div class="button">3</div>
+                            </div>
+                            <div class="calc-button-row">
+                                <div class="button">&lt;</div>
+                                <div class="button">0</div>
+                                <div class="button">C</div>
+                            </div>
+                            <div>
+                                <button id="verifyBtn" type="submit" class="submit-btn">Submit</button>
+                                <p class="action-left"><span id="tryCount">3</span> try left</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="notify-section">
+            <p id = "pinNotMatched" class="notify">❌ Pin Didn't Match, Please try again</p>
+            <p id = "pinMatched" class="notify">✅ Pin Matched... Secret door is opening for you</p>
+        </div>
+    </div>
+    <script>        
+        function updateInputText(id, num){
+            document.getElementById(id).value = num;
+        }
+        // Generate Button Event Handler...
+        document.getElementById("generateBtn").addEventListener("click", function(){
+            const random = 1000 + Math.random()*9000;
+            const pin = Math.round(random);              
+            updateInputText("pinNumber", pin);                                                                    
+        })
+        document.getElementById("calculator").addEventListener("click", function(event){
+            var number = event.target.innerText;
+            var pressNumberField = document.getElementById("pressedNumber");
+            var previousNumber = pressNumberField.value;
+            if(isNaN(number)){
+                if(number == "C"){
+                    pressNumberField.value = "";
+                }
+                else if(number == "<"){
+                    const shownNumber = pressNumberField.value;
+                    const splitNumber = shownNumber.split("");
+                    splitNumber.pop();
+                    const finalNumber = splitNumber.join("");
+                    pressNumberField.value = finalNumber;
+                }
+            }
+            else{
+                const newNumber =  previousNumber + number;
+                pressNumberField.value = newNumber;
+            }
+        })
+        document.getElementById("verifyBtn").addEventListener("click",function(){
+            const actualPin = document.getElementById("pinNumber").value;
+            const insertedPin = document.getElementById("pressedNumber").value;
+            if(insertedPin == actualPin){
+                document.getElementById("pinMatched").style.display = "block";
+                document.getElementById("pinNotMatched").style.display = "none"
+            }
+            else{
+                document.getElementById("pinNotMatched").style.display = "block";
+                document.getElementById("pinMatched").style.display = "none";
+                const tryCountValue = document.getElementById("tryCount").innerText;
+                const tryCountNumber = parseFloat(tryCountValue);
+                const remainCount = tryCountNumber - 1;
+                document.getElementById("tryCount").innerText = remainCount;
+                if (remainCount <= 0) {
+                    alert("Sorry! Your Account is locked");                    
+                    // document.getElementById("locked").style.display = "block";
+                    // document.getElementById("body1").style.display = "none";                    
+                }
+            }
+        })                                     
+    </script>
+</body>
+</html>
